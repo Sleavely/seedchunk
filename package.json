@@ -5,19 +5,35 @@
   "author": "Joakim Hedlund <contact@joakimhedlund.com>",
   "license": "MIT",
   "keywords": [],
-  "bin": {
-    "cli": "./dist/cli.js"
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "./package.json": "./package.json"
   },
   "files": [
-    "dist/*.js",
-    "dist/**/*.js"
+    "dist"
   ],
-  "types": "dist/index.d.ts",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "tsx --no-warnings --watch-path=./bin --watch-path=./src ./bin/cli.ts",
-    "prebuild": "rm -rf dist",
-    "build": "esbuild --bundle --platform=node --packages=external --sourcemap --outdir=./dist/ ./bin/*.ts",
-    "postbuild": "tsc ./src/index.ts --declaration --emitDeclarationOnly --outdir ./dist/",
+    "build": "rm -rf dist && npm run build:cjs && npm run build:esm && npm run build:types",
+    "build:cjs": "esbuild ./src/index.ts --bundle --platform=node --target=node18 --packages=external --format=cjs --outfile=./dist/index.js",
+    "build:esm": "esbuild ./src/index.ts --bundle --platform=node --target=node18 --packages=external --format=esm --outfile=./dist/index.mjs",
+    "build:types": "tsc ./src/index.ts --declaration --emitDeclarationOnly --skipLibCheck --esModuleInterop --moduleResolution node --outDir ./dist/ && cp ./dist/index.d.ts ./dist/index.d.mts",
+    "prepublishOnly": "npm test",
     "test": "vitest run && eslint src/ && tsc --noEmit && npm run build"
   },
   "devDependencies": {

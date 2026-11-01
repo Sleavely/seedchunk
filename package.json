@@ -1,0 +1,35 @@
+{
+  "name": "seedchunk",
+  "version": "1.0.0",
+  "description": "",
+  "author": "Joakim Hedlund <contact@joakimhedlund.com>",
+  "license": "MIT",
+  "keywords": [],
+  "bin": {
+    "cli": "./dist/cli.js"
+  },
+  "files": [
+    "dist/*.js",
+    "dist/**/*.js"
+  ],
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "tsx --no-warnings --watch-path=./bin --watch-path=./src ./bin/cli.ts",
+    "prebuild": "rm -rf dist",
+    "build": "esbuild --bundle --platform=node --packages=external --sourcemap --outdir=./dist/ ./bin/*.ts",
+    "postbuild": "tsc ./src/index.ts --declaration --emitDeclarationOnly --outdir ./dist/",
+    "test": "vitest run && eslint src/ && tsc --noEmit && npm run build"
+  },
+  "devDependencies": {
+    "@sleavely/eslint-config": "^1.0.1",
+    "@types/node": "^22.13.5",
+    "esbuild": "^0.27.3",
+    "tsx": "^4.19.3",
+    "typescript": "~5.3",
+    "vitest": "^3.0.7"
+  },
+  "dependencies": {
+    "random": "^5.4.1",
+    "simplex-noise": "^4.0.3"
+  }
+}
